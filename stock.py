@@ -83,7 +83,7 @@ def getSentiment(result, testSet):
             trueSentiment = "Bearish"
     return predictedSentiment, trueSentiment
 data = []
-with open('AAPl.csv') as csv_file:
+with open('QQQ.csv') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     count = 1
@@ -92,13 +92,13 @@ with open('AAPl.csv') as csv_file:
     reader_list = list(csv.reader(csv_file, delimiter=','))
     reader_list = reader_list[1:]
     for idx,row in enumerate(reader_list):
-        if (idx < len(reader_list)-7):
-            put[0] = round(get_change(float(reader_list[idx+7][4]),float(row[4])), 2)
+        if (idx < len(reader_list)-4):
+            put[0] = round(get_change(float(reader_list[idx+4][4]),float(row[4])), 2)
             put[1] = row[0]
             put[2] = reader_list[idx+4][0]
             data.append(put)
             put = [None]*3
-    TEST = [x[0] for x in data[len(data)-10:-1]]
+    TEST = [x[0] for x in data[len(data)-10:]]
     trainingSet = []
     testSet = []
     # turn into arrays of 5 (percent change over 5 days)
@@ -118,13 +118,13 @@ with open('AAPl.csv') as csv_file:
         predictions.append(result)
 
         predictedSentiment, trueSentiment = getSentiment(result, testSet[x][-1])
-    
+    print(TEST)
     dd = getNeighbors(trainingSet, TEST, k)
     test_prediction = getResponse(dd)
     average = sum([x[0] for x in test_prediction])/len(test_prediction)
     sentiment = getSentiment(test_prediction[0][0], 0)[0]
     onlyValues = [x[0] for x in test_prediction]
-    # print(sorted(test_prediction))
+    print(sorted(test_prediction))
     generatedMovement = round((test_prediction[0][0] + average)/2)/2
     # print(generatedMovement)
     print('Prediction for next 5 trading days: ' + '{0:+}% / '.format(test_prediction[0][0]) + sentiment +', Historic average and range: ' + repr(average)+ ', ' + repr(max(onlyValues)-min(onlyValues)))
